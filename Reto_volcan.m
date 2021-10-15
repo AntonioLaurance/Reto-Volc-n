@@ -23,5 +23,5 @@ v_yi = v_0.*sind(theta);
 % Aplicación del método de Euler para las velocidades
 % v_f = v_i + gt 
 
-v_x = 1; % Es constante
-v_y = @(t, v_i) v_i + g.*t; 
+v_x = v_xi; % Es constante
+v_y = @(t, v_i) v_yi + g.*t; 
