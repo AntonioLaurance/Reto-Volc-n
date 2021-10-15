@@ -14,7 +14,6 @@ h = input('Longitud de paso: ');
 
 % Construir condición inicial
 g = -9.81;  % m/seg^2
-h = 0.01;   % Longitud de paso
 
 v_xi = v_0.*cosd(theta);
 v_yi = v_0.*sind(theta);
