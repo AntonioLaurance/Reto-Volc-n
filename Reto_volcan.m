@@ -30,7 +30,7 @@ a_yi = -9.81;  % m/seg^2 (Valor de la aceleración de la gravedad)
 % Aplicación del método de Euler para las velocidades
 % v_f = v_i + gt 
 
-v_x = 1; % Es constante
+v_x = v_xi; % Es constante
 v_y = @(t, v_i) v_i + g.*t;
 
 % ax = @(t) k/m a_xi;
