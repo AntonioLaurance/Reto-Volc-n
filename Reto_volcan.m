@@ -17,7 +17,7 @@ p = input('Densidad del proyectil (kg/m^3): ');
 rho = input('Densidad del aire (kg/m^3):');
 
 As = 4.*pi().*r.^2; % Área superficial
-k = f.*As.*rho; % Coeficiente de resistencia del aire
+k = f.*As.*rho; % Coeficiente de resistencia del aire (kg/m)
 
 
 % Construir condición inicial
