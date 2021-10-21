@@ -14,7 +14,7 @@ fprintf('Suponemos que el proyectil es una esfera perfecta.\n\n');
 r = input('Radio (m): ');
 p_proy = input('Densidad del proyectil (kg/m^3): '); 
 rho = input('Densidad del aire (kg/m^3): ');
-f = input('Factor de forma: '); % Adimensional (es aproximadamente un 0.47 el coeficiente de arrastre frontal para una esfera)
+f = input('Factor de forma: '); % Adimensional
 
 % Sacamos valores de otras variables con los datos dados por el usuario
 v = (4./3).*pi().*r.^3; 	% Volumen (m^3)
@@ -24,10 +24,11 @@ k = f .* rho .* As;	  % Coeficiente de fricción del aire (kg/m)
 
 % Con fricción
 t = [0]; %tiempo inicial (seg)
-x = [0]; %posición horizontal inicial “x” (m)
-y = [10]; %posición vertical inicial “y” (m)
+fprintf('\n');
+x = input('Posición horizontal inicial (m):'); 
+y = input('Posición vertical inicial (m): '); 
 v_i = input('Velocidad inicial (m/seg): '); %magnitud de la velocidad (m/seg)
-theta = input('Ángulo de lanzamiento (grados): '); 
+theta = input('Ángulo de lanzamiento (grados): ');
 vx(1) = v_i(1)*cosd(theta(1));
 vy(1) = v_i(1)*sind(theta(1));
 ax(1)=-(k/m)*v_i(1)*vx(1); %aceleración en x (ms/^2)
@@ -47,7 +48,6 @@ ays(1)=-g; %aceleración en y (m/s^2)
 
 j=1;  % Contador
 
-% Uso del método de Euler
 while y(j)>0
     t(j+1) = t(j)+dt;
 
@@ -73,25 +73,27 @@ while y(j)>0
     j=j+1;
 end
 
-% Gráficas 
+
+
 for i=1: j
     figure(1)
-    plot(x,y,'b','MarkerSize',10)
+    plot(x, y, 'b', 'MarkerSize', 10)
     title('Tiro parabólico con y sin fricción')
     xlabel('x(m)');
     ylabel('y(m)');
     grid on
     hold on
 
-    plot(xs,ys,'b.','MarkerSize',10)
+    plot(xs, ys, 'b.', 'MarkerSize', 10)
     hold on 
 
-    plot(x(i), y(i), 'y','MarkerSize',15)
+    plot(x(i), y(i), 'y', 'MarkerSize', 15)
     pause(0.01)
 
-    plot(xs(i),ys(i),'b','MarkerSize',15)
+    plot(xs(i), ys(i), 'b', 'MarkerSize', 15)
     pause(0.05)
     legend({'Con fricción','Sin fricción'})
     hold off 
 end
+
 
