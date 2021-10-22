@@ -1,42 +1,34 @@
-% ----------------------------------------------------------------
+% -------------------------------------------------------------------------------------------------------
 % Reto: Volcán en erupción
-% ----------------------------------------------------------------
+% -------------------------------------------------------------------------------------------------------
 
 % Borramos memoria y limpiamos información del intérprete 
 clear all; clc
+g = 9.81; %aceleración de la gravedad (m/seg^2)
 
-% Declaramos variables
-g = 9.81; % aceleración de la gravedad (m/seg^2)
-dt = 0.01; % intervalo de tiempo (longitud de paso) h
+dt = 0.01; %intervalo de tiempo (longitud de paso)
 
-% Empezamos pidiendo datos al usuario
-fprintf('Suponemos que el proyectil es una esfera perfecta.\n\n');
-r = input('Radio (m): ');
-p_proy = input('Densidad del proyectil (kg/m^3): '); 
+fprintf('Asumimos que el proyectil es una esfera perfecta.\n\n');
+m = 0.5; %kg
 rho = input('Densidad del aire (kg/m^3): ');
-f = input('Factor de forma: '); % Adimensional
+f = input('Factor de forma: ');
 
-% Sacamos valores de otras variables con los datos dados por el usuario
-v = (4./3).*pi().*r.^3; 	% Volumen (m^3)
-As = 4.*pi().*r^2;      	% Área superficial (m^2)
-m = p_proy .* v;          % Masa (kg)
-k = f .* rho .* As;	  % Coeficiente de fricción del aire (kg/m)
+b= 2e-3; % Coeficiente de fricción del aire (kg/m)
 
-% Con fricción
-t = [0]; %tiempo inicial (seg)
-fprintf('\n');
-x = input('Posición horizontal inicial (m):'); 
-y = input('Posición vertical inicial (m): '); 
-v_i = input('Velocidad inicial (m/seg): '); %magnitud de la velocidad (m/seg)
-theta = input('Ángulo de lanzamiento (grados): ');
-vx(1) = v_i(1)*cosd(theta(1));
-vy(1) = v_i(1)*sind(theta(1));
-ax(1)=-(k/m)*v_i(1)*vx(1); %aceleración en x (ms/^2)
-ay(1)=-g-(k/m)*v_i(1)*vy(1); %aceleración en y (ms/^2)
-%ax(1)=-(k/m)*(v_i(1))^2*cosd(theta(1)); %aceleración en x (ms/^2)
-%ay(1)=-g-(k/m)*(v_i(1))^2*sind(theta(1)); %ay(1)=-g-(k/m)*v_i(1)*vy(1); 
+%Con fricción
+t = [0]; %tiempo (s)
+x = input('\nPosición horizontal inicial (m): '); %posición inicial en x (m)
+y = input('Posición vertical inicial (m): '); %posición inicial en y (m)
+v = input('Velocidad inicial (m/seg): '); %magnitud de la velocidasd (m/s)
+theta = input('Ángulo de disparo (grados): '); %ángulo inicial
+vx(1)=v(1)*cosd(theta(1));
+vy(1)=v(1)*sind(theta(1));
+ax(1)=-(b/m)*v(1)*vx(1); %aceleración en x (ms/^2)
+ay(1)=-g-(b/m)*v(1)*vy(1); %aceleración en y (ms/^2)
+%ax(1)=-(b/m)*(v(1))^2*cosd(theta(1)); %aceleración en x (ms/^2)
+%ay(1)=-g-(b/m)*(v(1))^2*sind(theta(1)); %ay(1)=-g-(b/m)*v(1)*vy(1); 
 
-% Sin fricción
+%Sin fricción
 xs = x; %sin fricción
 ys = y; %sin fricción
 vs = v; %magnitud de la velocidad (m/s)
@@ -46,54 +38,62 @@ vys(1)=vs(1)*sind(thetas(1));
 axs(1)=0; %aceleración en x (m/s^2)
 ays(1)=-g; %aceleración en y (m/s^2)
 
-j=1;  % Contador
+% Pendiente del volcán   y = -Tan(30º)x
+x_rec = [0];
+y_rec = y;
+% x_rec = linspace(0, 10, 0.1);
+% y_rec = - tand(30).*mallax;
 
-while y(j)>0
-    t(j+1) = t(j)+dt;
+k = 1; % Contador
+
+% Uso del método de Euler
+while y_rec(k) <= ys(k)
+    t(k+1)=t(k)+dt;
+    
+    % Con fricción
+    x(k+1)=x(k)+vx(k)*dt+0.5*ax(k)*dt^2;
+    y(k+1)=y(k)+vy(k)*dt+0.5*ay(k)*dt^2;
+    vx(k+1)=vx(k)+ax(k)*dt;
+    vy(k+1)=vy(k)+ay(k)*dt;
+    v(k+1)=sqrt(vx(k+1)^2+vy(k+1)^2);
+    theta(k+1)=atand(vy(k+1)/vx(k+1));
+    
+    ax(k+1)=-(b/m)*(v(k+1))^2*cosd(theta(k+1));
+    ay(k+1)=-g-(b/m)*(v(k+1))^2*sind(theta(k+1));
 
     % Sin fricción
-    x(j+1)=x(j)+vx(j)*dt+0.5*ax(j)*dt^2;
-    y(j+1)=y(j)+vy(j)*dt+0.5*ay(j)*dt^2;
-    vx(j+1)=vx(j)+ax(j)*dt;
-    vy(j+1)=vy(j)+ay(j)*dt;
-    v_i(j+1)=sqrt(vx(j+1)^2+vy(j+1)^2);
-    theta(j+1)=atand(vy(j+1)/vx(j+1));
+    xs(k+1)= xs(k)+vxs(k)*dt; 
+    ys(k+1) =ys (k) +vys(k)*dt-0.5*g*dt^2; 
+    vxs(k+1)=vxs(k);
+    vys(k+1)=vys(k)-g*dt;
+    vs(k+1)=sqrt(vxs(k+1)^2+vys(k+1)^2);
+    thetas(k+1)=atand(vys(k+1)/vxs(k+1));
+    
+    % Pendiente del volcán
+    x_rec(k+1) = xs(k+1); 
+    y_rec(k+1) = tand(330).*x_rec(k+1) + y(1);
 
-    ax(j+1)=-(k/m).*((v_i(j+1)).^2).*cosd(theta(j+1));
-    ay(j+1)= -g -(k/m).*((v_i(j+1)).^2).*sind(theta(j+1));
-
-    % Con fricción
-    xs(j+1)=xs(j)+vxs(j)*dt; 
-    ys(j+1)=ys(j)+vys(j)*dt-0.5*g*dt^2; 
-    vxs(j+1)=vxs(j);
-    vys(j+1)=vys(j)-g*dt;
-    vs(j+1)=sqrt(vxs(j+1)^2+vys(j+1)^2);
-    thetas(j+1)=atand(vys(j+1)/vxs(j+1));
-
-    j=j+1;
+    k=k+1;
 end
 
+% Gráficas
+figure(1)
+plot(x,y,'y.','MarkerSize',10)
+title('Tiro parabólico con y sin fricción')
+xlabel('x(m)');
+ylabel('y(m)');
+grid on
+hold on
+
+plot(xs,ys,'r.','MarkerSize',10)
+hold on 
+    
+plot(x_rec, y_rec, 'b.', 'MarkerSize', 10)
+hold on
+legend({'Con fricción','Sin fricción', 'Pendiente del volcán'})
+       
+hold off 
 
 
-for i=1: j
-    figure(1)
-    plot(x, y, 'b', 'MarkerSize', 10)
-    title('Tiro parabólico con y sin fricción')
-    xlabel('x(m)');
-    ylabel('y(m)');
-    grid on
-    hold on
-
-    plot(xs, ys, 'b.', 'MarkerSize', 10)
-    hold on 
-
-    plot(x(i), y(i), 'y', 'MarkerSize', 15)
-    pause(0.01)
-
-    plot(xs(i), ys(i), 'b', 'MarkerSize', 15)
-    pause(0.05)
-    legend({'Con fricción','Sin fricción'})
-    hold off 
-end
 
 
