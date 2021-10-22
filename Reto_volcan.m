@@ -4,16 +4,17 @@
 
 % Borramos memoria y limpiamos información del intérprete 
 clear all; clc
-g = 9.81; %aceleración de la gravedad (m/seg^2)
 
-dt = 0.01; %intervalo de tiempo (longitud de paso)
+% Declaramos variables
+g = 9.81; % Aceleración de la gravedad (m/seg^2)
+dt = 0.01; % Intervalo de tiempo (longitud de paso) h
+m = 0.5; % Masa (kg) [kg/m^3] [m^3]
+b = 2e-3; % Coeficiente de fricción del aire (kg/m) 2e-3
 
 fprintf('Asumimos que el proyectil es una esfera perfecta.\n\n');
-m = 0.5; %kg
-rho = input('Densidad del aire (kg/m^3): ');
-f = input('Factor de forma: ');
+fprintf('Masa: %.1f kg\n', m);
+fprintf('Coeficiente de fricción del aire: %.3f kg/m\n', b);
 
-b= 2e-3; % Coeficiente de fricción del aire (kg/m)
 
 %Con fricción
 t = [0]; %tiempo (s)
@@ -76,6 +77,7 @@ while y_rec(k) <= ys(k)
     k=k+1;
 end
 
+
 % Gráficas
 figure(1)
 plot(x,y,'y.','MarkerSize',10)
@@ -93,7 +95,5 @@ hold on
 legend({'Con fricción','Sin fricción', 'Pendiente del volcán'})
        
 hold off 
-
-
 
 
